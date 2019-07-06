@@ -28,10 +28,10 @@ fmin = f(fminn);
 fmax = f(fmaxn);
 disp(strcat('Centre freq', num2str(fc), 'Operational Bandwidth ', num2str(B./1e9), ' GHz ', 'Start Frequency: ',num2str(fmin./1e9),'GHz, End frequency: ', num2str(fmax./1e9),'GHz'));
 %Nfre = 1000;
-%f = f(fminn:fmaxn);
+f = f(fminn:fmaxn);
 %f = linspace(fmin, fmax, 100);
 detaf = 100e6;
-f = fmin:detaf:fmax;
+%f = fmin:detaf:fmax;
 
 Nfre = length(f);
 
@@ -47,34 +47,40 @@ a = size(X, 2); b = size(Y, 2); ab = a * b;
 Observ = zeros(NTRx*Nfre, ab);
 %Data = zeros(NTRx*Nfre, 1);
 
-Data = rawdata(:);
+Data = reshape(rawdata_2, NTRx*Nfre, 1);
 
 [X_i, Y_i] = meshgrid(X, Y);
 
     for m = 1:NTRx
         txi = TRx(m,:);
-        d_i = sqrt((X_i-txi(1))^2 + (Y_i-txi(2))^2);
+        d_i = sqrt((X_i-txi(1)).^2 + (Y_i-txi(2)).^2);
         d = d_i(:);
         for p = 1:Nfre
             f0 = f(p);
             k0 = (2 * pi * f0)/c;
-            Observ((m-1)*Nfre+p, :) = (exp(-1j*k0*d)/(4 * pi * d)).^2;
+            Observ((m-1)*Nfre+p, :) = (exp(-1j*k0*d)./(4 * pi * d)).^2;
         end
     end
 
 % Image
 
-Image_vec = pinv(Observ) * Data;
-Image_mat = zeros(a, b);
+A = (Observ' * Observ);
 
- for yj = 1:NfocXY(2)
-        for xj = 1:NfocXY(1)
-            Image_mat(xj, yj) = Image_vec((yj - 1)*a+xj);
-        end
- end
+Image_vec = A\Observ' * Data;
+%Image_mat = zeros(a, b);
+
+%Image_vec = pinv(Observ) * Data;
+
+Image_mat = reshape(Image_vec, a, b);
+
+%  for yj = 1:NfocXY(2)
+%         for xj = 1:NfocXY(1)
+%             Image_mat(xj, yj) = Image_vec((yj - 1)*a+xj);
+%         end
+%  end
  
 figure(l + 100);
-imagesc(X, Y, (abs(Image_mat))); shading flat;colormap('gray');
+imagesc(X, Y, (abs(Image_mat)).'); shading flat;colormap('gray');
 xlabel('X [m]', 'FontSize', 12, 'FontWeight', 'bold');
 ylabel('Y [m]', 'FontSize', 12, 'FontWeight', 'bold');
 title(['Sphere Image, BW = ', num2str(B*10^(-9)), 'GHz, Spacing = ', num2str(Sfactor), 'cm, f_c = ', num2str(fc*10^(-9)), ' GHz'],...

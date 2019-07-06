@@ -29,18 +29,18 @@ TRx(:,1) = [-70e-2:1e-2:70e-2].';
 %% imaging parameters
 % Set Image area
 % X-cross range; Y-Range;
-% focX = [-0.25 0.25];
-% focY = [0.2 0.6];
+focX = [-0.25 0.25];
+focY = [0.2 0.6];
 % 
-focX = [-0.1 0.1];
-focY = [0.35 0.5];
+% focX = [-0.1 0.1];
+% focY = [0.35 0.5];
 
 %focX = [-0.6 0.6];
 %focY = [0.2 0.7];
 
 
 % Image resolution
-detas = 0.1e-2;
+detas = 1e-2;
 % Reduce sampling by the factor of
 Sfactor = Sfactork(k);
 % Dynamic range of image display

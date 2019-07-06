@@ -53,25 +53,29 @@ Data = rawdata(:);
 
     for m = 1:NTRx
         txi = TRx(m,:);
-        d_i = sqrt((X_i-txi(1))^2 + (Y_i-txi(2))^2);
+        d_i = sqrt((X_i-txi(1)).^2 + (Y_i-txi(2)).^2);
         d = d_i(:);
         for p = 1:Nfre
             f0 = f(p);
             k0 = (2 * pi * f0)/c;
-            Observ((m-1)*Nfre+p, :) = (exp(-1j*k0*d)/(4 * pi * d)).^2;
+            Observ((m-1)*Nfre+p, :) = (exp(-1j*k0*d)./(4 * pi * d)).^2;
         end
     end
 
 % Image
 
-Image_vec = pinv(Observ) * Data;
-Image_mat = zeros(a, b);
+A 
 
- for yj = 1:NfocXY(2)
-        for xj = 1:NfocXY(1)
-            Image_mat(xj, yj) = Image_vec((yj - 1)*a+xj);
-        end
- end
+Image_vec = pinv(Observ) * Data;
+%Image_mat = zeros(a, b);
+
+Image_mat = reshape(Image_vec, a, b);
+
+%  for yj = 1:NfocXY(2)
+%         for xj = 1:NfocXY(1)
+%             Image_mat(xj, yj) = Image_vec((yj - 1)*a+xj);
+%         end
+%  end
  
 figure(l + 100);
 imagesc(X, Y, (abs(Image_mat))); shading flat;colormap('gray');

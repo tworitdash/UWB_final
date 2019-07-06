@@ -131,7 +131,7 @@ hold on;
 plot(db(diag(S)/max(diag(S))), 'LineWidth', 3, 'Color', color);
 grid on;
 hold on;
-legendInfo{k} = ['Spacing = ',  num2str(Sfactor/(lambdac*100)), '\lambda cm'];
+%legendInfo{k} = ['Spacing = ',  num2str(Sfactor/(lambdac*100)), '\lambda cm'];
 %legendInfo{l} = ['BW = ',  num2str(B*10^(-9)), ' GHz'];
 xlabel('Serial Number', 'FontSize', 12, 'FontWeight', 'bold');
 ylabel('Singular Value dB scale Normalized', 'FontSize', 12, 'FontWeight', 'bold');
@@ -146,32 +146,32 @@ title(['Singular value at BW = ', num2str(B*10^(-9)), 'GHz f_c = ', num2str(fc*1
 % % A_new = U(1:1500, 1:1500)*S(1:1500, 1:1500)*V(1:1500, 1:1500)';
 % % 
 % %Image_vec = pinv(A_new) * Data(1:1500, :);
-% % Sum_i = zeros(ab, 1);
-% % for i = 1:2091
-% %     sigma_i = S(i, i);
-% %     U_i = U(:, i)';
-% %     V_i = V(:, i);
-% %     Sum_i = Sum_i + (1/sigma_i) * U_i * Data * V_i;
-% % end
-% % % S_dig = diag(S);
-% % % Image_vec = (diag(S_dig(1:1400))^(-1)\U(:, 1:1400)' * Data) * V(:, 1:1400);
-% % Image_vec = Sum_i;
-% % 
-% % Image_mat = zeros(a, b);
-% % 
-% %  for xj = 1:NfocXY(1)
-% %         for yj = 1:NfocXY(2)
-% %             Image_mat(xj, yj) = Image_vec((xj - 1)*b+yj);
-% %         end
-% %  end
-% %  figure;
-% %  imagesc(X, Y, db(abs((Image_mat)))); shading flat;colormap('gray');
-% %  
+Sum_i = zeros(ab, 1);
+for i = 1:1768
+    sigma_i = S(i, i);
+    U_i = U(:, i)';
+    V_i = V(:, i);
+    Sum_i = Sum_i + (1/sigma_i) * U_i * Data * V_i;
+end
+% S_dig = diag(S);
+% Image_vec = (diag(S_dig(1:1400))^(-1)\U(:, 1:1400)' * Data) * V(:, 1:1400);
+Image_vec = Sum_i;
+
+Image_mat = zeros(a, b);
+
+ for xj = 1:NfocXY(1)
+        for yj = 1:NfocXY(2)
+            Image_mat(xj, yj) = Image_vec((xj - 1)*b+yj);
+        end
+ end
+ figure;
+ imagesc(X, Y, db(abs((Image_mat)))); shading flat;colormap('gray');
+ 
 % %  
 % %  %X_ls = V * (S(1:ab, :))\U' * Data;
 
 %% With dominant singular vlaues:
-m = 1818;
+m = 1723;
 Image_mat_2 = zeros(a, b);
 X_ls = V(:, 1:m) * inv(S(1:m, 1:m)) * U(:, 1:m)' * Data;
 %Image_mat = reshape(X_ls, b, a);
